@@ -709,6 +709,55 @@
         .marketplace-link a:hover {
             text-decoration: underline;
         }
+
+        .data-management {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .data-management h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .data-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .data-button {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .data-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .data-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .file-input {
+            display: none;
+        }
     </style>
 </head>
 <body data-theme="light">
@@ -819,6 +868,29 @@
         </div>
         <div class="footer-text">
             <p>© 2023 Cryptocurrency Donation Link Generator. All rights reserved.</p>
+        </div>
+    </div>
+
+    <div class="data-management">
+        <h3>Data Management</h3>
+        <div class="data-buttons">
+            <button class="data-button" onclick="exportDonations()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export Donations
+            </button>
+            <button class="data-button" onclick="document.getElementById('importFile').click()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Import Donations
+            </button>
+            <input type="file" id="importFile" class="file-input" accept=".json" onchange="importDonations(event)">
         </div>
     </div>
 </div>
@@ -1037,8 +1109,8 @@ function generate() {
         currentLink += "?amount=" + amount;
     }
     
-    // Save donation details
-    const donationDetails = {
+    // Create donation data object
+    const donationData = {
         title: title || "Untitled Donation",
         description: description || "No description provided",
         crypto: selectedCrypto,
@@ -1046,23 +1118,14 @@ function generate() {
         amount: amount,
         visibility: visibility,
         timestamp: new Date().toISOString(),
-        category: "personal", // Default category
-        receivedAmount: "0", // Initialize received amount
-        rating: 0,
-        ratingCount: 0
+        category: "personal"
     };
 
-    // Save to localStorage
-    let donations = JSON.parse(localStorage.getItem('donations') || '[]');
-    donations.push(donationDetails);
-    localStorage.setItem('donations', JSON.stringify(donations));
-
-    // If public, also save to a separate public donations list
-    if (visibility === 'public') {
-        let publicDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
-        publicDonations.push(donationDetails);
-        localStorage.setItem('publicDonations', JSON.stringify(publicDonations));
-    }
+    // Encode donation data for URL
+    const encodedData = btoa(JSON.stringify(donationData));
+    
+    // Create shareable URL
+    const shareableUrl = `${window.location.origin}/marketplace.html?donation=${encodedData}`;
     
     // Update the UI
     document.getElementById('outputLink').innerHTML = 
@@ -1119,9 +1182,19 @@ function generate() {
     document.getElementById('downloadQR').style.display = 'inline-block';
     document.getElementById('shareQR').style.display = 'inline-block';
 
+    // Show shareable marketplace link if public
+    if (visibility === 'public') {
+        const marketplaceLink = document.createElement('div');
+        marketplaceLink.className = 'marketplace-link';
+        marketplaceLink.innerHTML = `
+            <p>Share this donation in the marketplace:</p>
+            <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>
+        `;
+        document.getElementById('outputLink').after(marketplaceLink);
+    }
+
     // Update counter
     linkCounter++;
-    localStorage.setItem('linkCounter', linkCounter);
     document.getElementById('linkCounter').textContent = linkCounter;
 }
 
@@ -1441,6 +1514,86 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.querySelector('.footer').before(marketplaceLink);
 });
+
+// Firebase SDK
+const firebaseConfig = {
+    apiKey: "AIzaSyBvVQvQvQvQvQvQvQvQvQvQvQvQvQvQvQvQ",
+    authDomain: "qrsend-org.firebaseapp.com",
+    projectId: "qrsend-org",
+    storageBucket: "qrsend-org.appspot.com",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abcdef1234567890abcdef"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+function exportDonations() {
+    const donations = JSON.parse(localStorage.getItem('donations') || '[]');
+    const publicDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
+    
+    const exportData = {
+        donations: donations,
+        publicDonations: publicDonations,
+        timestamp: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `donations_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importDonations(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            
+            if (!data.donations || !data.publicDonations) {
+                throw new Error('Invalid file format');
+            }
+            
+            // Merge existing donations with imported ones
+            const existingDonations = JSON.parse(localStorage.getItem('donations') || '[]');
+            const existingPublicDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
+            
+            // Create a map of existing donation IDs
+            const existingIds = new Set(existingDonations.map(d => d.id));
+            
+            // Add only new donations
+            const newDonations = data.donations.filter(d => !existingIds.has(d.id));
+            const newPublicDonations = data.publicDonations.filter(d => !existingIds.has(d.id));
+            
+            const updatedDonations = [...existingDonations, ...newDonations];
+            const updatedPublicDonations = [...existingPublicDonations, ...newPublicDonations];
+            
+            localStorage.setItem('donations', JSON.stringify(updatedDonations));
+            localStorage.setItem('publicDonations', JSON.stringify(updatedPublicDonations));
+            
+            alert(`Successfully imported ${newDonations.length} donations!`);
+            
+            // Reload the marketplace page if we're on it
+            if (window.location.pathname.includes('marketplace.html')) {
+                loadDonations();
+            }
+        } catch (error) {
+            alert('Error importing donations: ' + error.message);
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset file input
+}
 </script>
 
 </body>
