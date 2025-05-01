@@ -637,16 +637,30 @@
             if (donationParam) {
                 try {
                     const donationData = JSON.parse(atob(donationParam));
-                    donations = [donationData];
+                    
+                    // Add unique ID if not present
+                    if (!donationData.id) {
+                        donationData.id = Date.now().toString();
+                    }
+                    
+                    // Import the donation to local storage
+                    const storedDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
+                    const existingIds = new Set(storedDonations.map(d => d.id));
+                    
+                    if (!existingIds.has(donationData.id)) {
+                        storedDonations.push(donationData);
+                        localStorage.setItem('publicDonations', JSON.stringify(storedDonations));
+                        alert('New donation imported successfully!');
+                    }
+                    
+                    donations = storedDonations;
                     filteredDonations = [...donations];
                     displayDonations();
                 } catch (error) {
                     console.error('Error parsing donation data:', error);
-                    // Fallback to localStorage if URL parameter is invalid
                     loadFromLocalStorage();
                 }
             } else {
-                // Load from localStorage if no URL parameter
                 loadFromLocalStorage();
             }
             
@@ -754,22 +768,46 @@
         }
 
         function shareDonation(link) {
+            // Get the current donation data
+            const currentDonation = filteredDonations[0];
+            if (!currentDonation) return;
+            
+            // Create shareable URL with donation data
+            const donationData = {
+                id: currentDonation.id,
+                title: currentDonation.title,
+                description: currentDonation.description,
+                crypto: currentDonation.crypto,
+                address: currentDonation.address,
+                amount: currentDonation.amount,
+                visibility: currentDonation.visibility,
+                timestamp: currentDonation.timestamp,
+                category: currentDonation.category
+            };
+            
+            const encodedData = btoa(JSON.stringify(donationData));
+            const shareableUrl = `${window.location.origin}/marketplace.html?donation=${encodedData}`;
+            
             if (navigator.share) {
                 navigator.share({
                     title: 'Cryptocurrency Donation',
-                    text: 'Check out this cryptocurrency donation address',
-                    url: link
+                    text: currentDonation.title,
+                    url: shareableUrl
                 }).catch(err => {
                     console.error('Error sharing:', err);
+                    copyToClipboard(shareableUrl);
                 });
             } else {
-                // Fallback for browsers that don't support Web Share API
-                navigator.clipboard.writeText(link).then(() => {
-                    alert('Donation link copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy link:', err);
-                });
+                copyToClipboard(shareableUrl);
             }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Donation link copied to clipboard! Share this link with others to let them import the donation.');
+            }).catch(err => {
+                console.error('Failed to copy link:', err);
+            });
         }
 
         function filterDonations() {
@@ -846,13 +884,12 @@
         }
 
         function exportDonations() {
-            const donations = JSON.parse(localStorage.getItem('donations') || '[]');
-            const publicDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
+            const storedDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
             
             const exportData = {
-                donations: donations,
-                publicDonations: publicDonations,
-                timestamp: new Date().toISOString()
+                donations: storedDonations,
+                timestamp: new Date().toISOString(),
+                version: "1.0"
             };
             
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -865,6 +902,8 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            
+            alert('Donations exported successfully! Share this file with others to let them import the donations.');
         }
 
         function importDonations(event) {
@@ -876,29 +915,25 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     
-                    if (!data.donations || !data.publicDonations) {
+                    if (!data.donations) {
                         throw new Error('Invalid file format');
                     }
                     
-                    // Merge existing donations with imported ones
-                    const existingDonations = JSON.parse(localStorage.getItem('donations') || '[]');
-                    const existingPublicDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
-                    
-                    // Create a map of existing donation IDs
+                    // Get existing donations
+                    const existingDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
                     const existingIds = new Set(existingDonations.map(d => d.id));
                     
                     // Add only new donations
                     const newDonations = data.donations.filter(d => !existingIds.has(d.id));
-                    const newPublicDonations = data.publicDonations.filter(d => !existingIds.has(d.id));
                     
-                    const updatedDonations = [...existingDonations, ...newDonations];
-                    const updatedPublicDonations = [...existingPublicDonations, ...newPublicDonations];
-                    
-                    localStorage.setItem('donations', JSON.stringify(updatedDonations));
-                    localStorage.setItem('publicDonations', JSON.stringify(updatedPublicDonations));
-                    
-                    alert(`Successfully imported ${newDonations.length} donations!`);
-                    loadDonations();
+                    if (newDonations.length > 0) {
+                        const updatedDonations = [...existingDonations, ...newDonations];
+                        localStorage.setItem('publicDonations', JSON.stringify(updatedDonations));
+                        alert(`Successfully imported ${newDonations.length} new donations!`);
+                        loadDonations();
+                    } else {
+                        alert('No new donations found in the file.');
+                    }
                 } catch (error) {
                     alert('Error importing donations: ' + error.message);
                 }
@@ -907,7 +942,46 @@
             event.target.value = ''; // Reset file input
         }
 
-        // Initialize the page
+        // Add a new function to handle file drops
+        function handleFileDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const file = event.dataTransfer.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (!data.donations) {
+                            throw new Error('Invalid file format');
+                        }
+                        
+                        // Get existing donations
+                        const existingDonations = JSON.parse(localStorage.getItem('publicDonations') || '[]');
+                        const existingIds = new Set(existingDonations.map(d => d.id));
+                        
+                        // Add only new donations
+                        const newDonations = data.donations.filter(d => !existingIds.has(d.id));
+                        
+                        if (newDonations.length > 0) {
+                            const updatedDonations = [...existingDonations, ...newDonations];
+                            localStorage.setItem('publicDonations', JSON.stringify(updatedDonations));
+                            alert(`Successfully imported ${newDonations.length} new donations!`);
+                            loadDonations();
+                        } else {
+                            alert('No new donations found in the file.');
+                        }
+                    } catch (error) {
+                        alert('Error importing donations: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Add drag and drop functionality
         document.addEventListener('DOMContentLoaded', function() {
             loadDonations();
             
@@ -915,6 +989,14 @@
             document.getElementById('searchInput').addEventListener('input', filterDonations);
             document.getElementById('categoryFilter').addEventListener('change', filterDonations);
             document.getElementById('sortFilter').addEventListener('change', filterDonations);
+            
+            // Add drag and drop event listeners
+            document.body.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+            
+            document.body.addEventListener('drop', handleFileDrop);
         });
     </script>
 </body>
