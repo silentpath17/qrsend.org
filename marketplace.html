@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Donations Marketplace | Cryptocurrency Donation Link Generator</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Public Donations Marketplace | Cryptocurrency Donation Link Generator">
+    <meta name="description" content="Browse and support public cryptocurrency donations. Discover projects and causes accepting crypto donations.">
+    <meta name="keywords" content="cryptocurrency donation, bitcoin donation, ethereum donation, monero donation, crypto QR code, donation marketplace">
+    <meta name="author" content="Cryptocurrency Donation Link Generator">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qrscan.org/marketplace">
+    <meta property="og:title" content="Public Donations Marketplace | Cryptocurrency Donation Link Generator">
+    <meta property="og:description" content="Browse and support public cryptocurrency donations. Discover projects and causes accepting crypto donations.">
+    <meta property="og:image" content="https://qrscan.org/preview-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://qrscan.org/marketplace">
+    <meta property="twitter:title" content="Public Donations Marketplace | Cryptocurrency Donation Link Generator">
+    <meta property="twitter:description" content="Browse and support public cryptocurrency donations. Discover projects and causes accepting crypto donations.">
+    <meta property="twitter:image" content="https://qrscan.org/preview-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#2C3E50">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://qrscan.org/marketplace">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #2c3e50;
+            --bg-color: #ffffff;
+            --input-bg: #f8f9fa;
+            --input-border: #dee2e6;
+            --card-bg: #ffffff;
+            --card-border: #e9ecef;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --warning-color: #f1c40f;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #ecf0f1;
+            --secondary-color: #bdc3c7;
+            --accent-color: #3498db;
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --input-bg: #34495e;
+            --input-border: #465c71;
+            --card-bg: #34495e;
+            --card-border: #465c71;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .nav-buttons {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            padding: 0.5rem 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin: 0;
+            padding: 1rem 0;
+        }
+
+        .marketplace-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 2.5rem;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-label {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 2px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .donations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .donation-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .donation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .donation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .donation-title {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin: 0;
+            flex: 1;
+        }
+
+        .donation-category {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .donation-description {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .donation-stats {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: var(--input-bg);
+            border-radius: 8px;
+        }
+
+        .progress-container {
+            margin: 0.5rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--input-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success-color);
+            transition: width 0.3s ease;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .donation-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 0.75rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .action-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .donation-qr {
+            margin: 1rem 0;
+            text-align: center;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .donation-qr canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary-color);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--input-border);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .development-notice {
+            background-color: var(--warning-color);
+            color: var(--text-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .development-notice p {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            background-color: var(--error-color);
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .rating-star {
+            color: var(--warning-color);
+            font-size: 1rem;
+        }
+
+        .rating-count {
+            color: var(--secondary-color);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .marketplace-controls {
+                flex-direction: column;
+            }
+
+            .search-container {
+                width: 100%;
+            }
+
+            .filters {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .donations-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                position: static;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.75rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .donation-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="container">
+        <div class="header">
+            <div class="nav-buttons">
+                <button class="nav-button" id="themeToggle" onclick="toggleTheme()">☀️ Light Mode</button>
+                <button class="nav-button" id="backBtn" onclick="window.location.href='index.html'">← Back</button>
+            </div>
+            <h1>Public Donations Marketplace</h1>
+        </div>
+
+        <div class="development-notice">
+            <p>⚠️ This marketplace is currently in development phase. Features and functionality may change.</p>
+        </div>
+
+        <div class="marketplace-controls">
+            <div class="search-container">
+                <div class="search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search donations..." oninput="filterDonations()">
+                </div>
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <span class="filter-label">Category:</span>
+                    <select class="filter-select" id="categoryFilter" title="Select donation category" onchange="filterDonations()">
+                        <option value="all">All Categories</option>
+                        <option value="charity">Charity</option>
+                        <option value="content">Content Creation</option>
+                        <option value="project">Project Funding</option>
+                        <option value="personal">Personal</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Sort by:</span>
+                    <select class="filter-select" id="sortFilter" title="Select sorting method" onchange="sortDonations()">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="progress">Progress</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="donations-grid" id="donationsGrid">
+            <!-- Donation cards will be inserted here -->
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3>No donations found</h3>
+            <p>Try adjusting your search or filters</p>
+        </div>
+
+        <div class="loading-state" id="loadingState" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Loading donations...</p>
+        </div>
+    </div>
+
+    <script>
+        let donations = [];
+        let filteredDonations = [];
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙 Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️ Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function loadDonations() {
+            // Load donations from localStorage
+            const storedDonations = localStorage.getItem('publicDonations');
+            if (storedDonations) {
+                donations = JSON.parse(storedDonations);
+            } else {
+                // Add some mock data if no public donations exist
+                donations = [
+                    {
+                        title: "Example Donation",
+                        description: "This is an example public donation",
+                        crypto: "bitcoin",
+                        address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+                        amount: "0.001",
+                        visibility: "public",
+                        timestamp: new Date().toISOString(),
+                        category: "personal",
+                        receivedAmount: "0",
+                        rating: 4.5,
+                        ratingCount: 10
+                    }
+                ];
+                // Store the mock donations
+                localStorage.setItem('publicDonations', JSON.stringify(donations));
+            }
+            
+            filteredDonations = [...donations];
+            displayDonations();
+        }
+
+        function displayDonations() {
+            const grid = document.getElementById('donationsGrid');
+            grid.innerHTML = '';
+
+            if (filteredDonations.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No donations found</h3>
+                        <p>There are currently no public donations available.</p>
+                        <a href="index.html" class="create-donation-btn">Create a Donation</a>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredDonations.forEach(donation => {
+                const card = document.createElement('div');
+                card.className = 'donation-card';
+                
+                const cryptoPrefix = {
+                    bitcoin: "bitcoin:",
+                    monero: "monero:",
+                    ethereum: "ethereum:",
+                    solana: "solana:",
+                    litecoin: "litecoin:",
+                    dogecoin: "dogecoin:",
+                    ripple: "ripple:",
+                    cardano: "cardano:",
+                    tether: "ethereum:",
+                    binancecoin: "ethereum:",
+                    polkadot: "polkadot:"
+                }[donation.crypto] || "bitcoin:";
+
+                const donationLink = cryptoPrefix + donation.address + (donation.amount ? `?amount=${donation.amount}` : '');
+                
+                card.innerHTML = `
+                    <div class="donation-header">
+                        <h3 class="donation-title">${donation.title}</h3>
+                        <span class="donation-category">${donation.category}</span>
+                    </div>
+                    <p class="donation-description">${donation.description}</p>
+                    <div class="donation-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Cryptocurrency:</span>
+                            <span class="stat-value">${donation.crypto.toUpperCase()}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Amount:</span>
+                            <span class="stat-value">${donation.amount || 'Any'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Received:</span>
+                            <span class="stat-value">${donation.receivedAmount}</span>
+                        </div>
+                    </div>
+                    <div class="donation-actions">
+                        <button onclick="copyAddress('${donation.address}')" class="action-button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy Address
+                        </button>
+                        <button onclick="shareDonation('${donationLink}')" class="action-button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function copyAddress(address) {
+            navigator.clipboard.writeText(address).then(() => {
+                alert('Address copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy address:', err);
+            });
+        }
+
+        function shareDonation(link) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Cryptocurrency Donation',
+                    text: 'Check out this cryptocurrency donation address',
+                    url: link
+                }).catch(err => {
+                    console.error('Error sharing:', err);
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(link).then(() => {
+                    alert('Donation link copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy link:', err);
+                });
+            }
+        }
+
+        function filterDonations() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const sortBy = document.getElementById('sortFilter').value;
+
+            filteredDonations = donations.filter(donation => {
+                const matchesSearch = donation.title.toLowerCase().includes(searchTerm) ||
+                                    donation.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'all' || donation.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            // Sort donations
+            filteredDonations.sort((a, b) => {
+                switch (sortBy) {
+                    case 'newest':
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                    case 'oldest':
+                        return new Date(a.timestamp) - new Date(b.timestamp);
+                    case 'rating':
+                        return b.rating - a.rating;
+                    default:
+                        return 0;
+                }
+            });
+
+            displayDonations();
+        }
+
+        function sortDonations() {
+            const sortBy = document.getElementById('sortFilter').value;
+            
+            filteredDonations.sort((a, b) => {
+                switch (sortBy) {
+                    case 'newest':
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                    case 'oldest':
+                        return new Date(a.timestamp) - new Date(b.timestamp);
+                    case 'popular':
+                        return (b.ratingCount || 0) - (a.ratingCount || 0);
+                    case 'progress':
+                        const progressA = a.amount ? (a.receivedAmount / a.amount) : 0;
+                        const progressB = b.amount ? (b.receivedAmount / b.amount) : 0;
+                        return progressB - progressA;
+                    default:
+                        return 0;
+                }
+            });
+            
+            displayDonations();
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDonations();
+            
+            // Add event listeners for filters
+            document.getElementById('searchInput').addEventListener('input', filterDonations);
+            document.getElementById('categoryFilter').addEventListener('change', filterDonations);
+            document.getElementById('sortFilter').addEventListener('change', filterDonations);
+        });
+    </script>
+</body>
+</html> 

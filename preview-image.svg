@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="1200" height="630" fill="#2C3E50"/>
+    
+    <!-- QR Code Pattern (Larger) -->
+    <rect x="400" y="200" width="400" height="400" fill="white"/>
+    
+    <!-- QR Code Pattern Details -->
+    <rect x="450" y="250" width="50" height="50" fill="#2C3E50"/>
+    <rect x="500" y="250" width="50" height="50" fill="#2C3E50"/>
+    <rect x="550" y="250" width="50" height="50" fill="#2C3E50"/>
+    <rect x="600" y="250" width="50" height="50" fill="#2C3E50"/>
+    
+    <rect x="450" y="300" width="50" height="50" fill="#2C3E50"/>
+    <rect x="600" y="300" width="50" height="50" fill="#2C3E50"/>
+    
+    <rect x="450" y="350" width="50" height="50" fill="#2C3E50"/>
+    <rect x="500" y="350" width="50" height="50" fill="#2C3E50"/>
+    <rect x="550" y="350" width="50" height="50" fill="#2C3E50"/>
+    <rect x="600" y="350" width="50" height="50" fill="#2C3E50"/>
+    
+    <rect x="450" y="400" width="50" height="50" fill="#2C3E50"/>
+    <rect x="600" y="400" width="50" height="50" fill="#2C3E50"/>
+    
+    <!-- Text -->
+    <text x="600" y="150" font-family="Arial" font-size="48" fill="white" text-anchor="middle">
+        QR Scan - Cryptocurrency Donation Link Generator
+    </text>
+    <text x="600" y="550" font-family="Arial" font-size="36" fill="white" text-anchor="middle">
+        Generate QR Codes for Crypto Donations
+    </text>
+</svg> 

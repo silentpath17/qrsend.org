@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Wallet Guide</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #2c3e50;
+            --bg-color: #ffffff;
+            --input-bg: #f8f9fa;
+            --input-border: #dee2e6;
+            --card-bg: #ffffff;
+            --card-border: #e9ecef;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #ecf0f1;
+            --secondary-color: #bdc3c7;
+            --accent-color: #3498db;
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --input-bg: #34495e;
+            --input-border: #465c71;
+            --card-bg: #34495e;
+            --card-border: #465c71;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin: 0;
+            padding: 1rem 0;
+        }
+
+        .crypto-section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .step {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+            background-color: var(--input-bg);
+            border-radius: 4px;
+        }
+
+        .step h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .step img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .step code {
+            background-color: var(--card-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: monospace;
+            color: var(--text-color);
+        }
+
+        .nav-buttons {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        button { 
+            padding: 0.5rem 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--secondary-color);
+        }
+
+        .warning {
+            background-color: var(--error-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        [data-theme="dark"] .warning {
+            background-color: #c0392b;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-buttons">
+        <button id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </div>
+
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Generator</a>
+        
+        <div class="header">
+            <h1>Cryptocurrency Wallet Guide</h1>
+            <p>Learn how to create and use cryptocurrency wallets safely</p>
+        </div>
+
+        <div class="crypto-section">
+            <h2>Bitcoin (BTC)</h2>
+            <div class="step">
+                <h3>1. Choose a Wallet</h3>
+                <p>Recommended wallets:</p>
+                <ul>
+                    <li>Hardware Wallet (Most Secure): Ledger, Trezor</li>
+                    <li>Mobile Wallet: BlueWallet, Electrum</li>
+                    <li>Desktop Wallet: Bitcoin Core, Electrum</li>
+                </ul>
+            </div>
+            <div class="step">
+                <h3>2. Download and Install</h3>
+                <p>Download your chosen wallet from the official website only. Never trust third-party sources.</p>
+            </div>
+            <div class="step">
+                <h3>3. Create Your Wallet</h3>
+                <p>Follow the wallet's setup process. You'll receive a recovery phrase (seed phrase) - write this down and store it safely offline.</p>
+                <div class="warning">
+                    Never share your recovery phrase with anyone. Anyone with access to it can access your funds.
+                </div>
+            </div>
+            <div class="step">
+                <h3>4. Find Your Address</h3>
+                <p>In your wallet, look for "Receive" or "Get Address". This is your public Bitcoin address that you can share to receive funds.</p>
+            </div>
+        </div>
+
+        <div class="crypto-section">
+            <h2>Monero (XMR)</h2>
+            <div class="step">
+                <h3>1. Choose a Wallet</h3>
+                <p>Recommended wallets:</p>
+                <ul>
+                    <li>Desktop: Monero GUI, Monero CLI</li>
+                    <li>Mobile: Cake Wallet, Monerujo</li>
+                </ul>
+            </div>
+            <div class="step">
+                <h3>2. Download and Install</h3>
+                <p>Download from getmonero.org or your device's official app store.</p>
+            </div>
+            <div class="step">
+                <h3>3. Create Your Wallet</h3>
+                <p>Follow the setup process. Save your recovery phrase securely.</p>
+            </div>
+            <div class="step">
+                <h3>4. Find Your Address</h3>
+                <p>Look for "Receive" or "Address" in your wallet to find your Monero address.</p>
+            </div>
+        </div>
+
+        <div class="crypto-section">
+            <h2>Ethereum (ETH)</h2>
+            <div class="step">
+                <h3>1. Choose a Wallet</h3>
+                <p>Recommended wallets:</p>
+                <ul>
+                    <li>Browser Extension: MetaMask</li>
+                    <li>Mobile: Trust Wallet, MetaMask Mobile</li>
+                    <li>Hardware: Ledger, Trezor</li>
+                </ul>
+            </div>
+            <div class="step">
+                <h3>2. Install Your Wallet</h3>
+                <p>For MetaMask: Install the browser extension from metamask.io</p>
+            </div>
+            <div class="step">
+                <h3>3. Create Your Wallet</h3>
+                <p>Follow the setup process and securely store your recovery phrase.</p>
+            </div>
+            <div class="step">
+                <h3>4. Find Your Address</h3>
+                <p>Click on your account in MetaMask to copy your Ethereum address.</p>
+            </div>
+        </div>
+
+        <div class="crypto-section">
+            <h2>Security Tips</h2>
+            <div class="step">
+                <h3>1. Backup Your Recovery Phrase</h3>
+                <p>Write it down on paper and store it in a secure location. Never store it digitally.</p>
+            </div>
+            <div class="step">
+                <h3>2. Use Strong Passwords</h3>
+                <p>Create unique, strong passwords for your wallets.</p>
+            </div>
+            <div class="step">
+                <h3>3. Enable 2FA When Available</h3>
+                <p>Use two-factor authentication for additional security.</p>
+            </div>
+            <div class="step">
+                <h3>4. Keep Your Software Updated</h3>
+                <p>Regularly update your wallet software to the latest version.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check for saved theme preference
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggle').textContent = '☀️ Light Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙 Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️ Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme on page load
+        initTheme();
+    </script>
+</body>
+</html> 
